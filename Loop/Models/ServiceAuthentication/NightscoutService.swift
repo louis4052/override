@@ -14,13 +14,23 @@ import LoopKitUI
 
 // Encapsulates a Nightscout site and its authentication
 class NightscoutService: ServiceAuthenticationUI {
+
+    private var loggerManager: LoggerManager
+
+    private var logger: Logger
+
     var credentialValues: [String?]
 
     var credentialFormFields: [ServiceCredential]
 
     let title: String = NSLocalizedString("Nightscout", comment: "The title of the Nightscout service")
 
-    init(siteURL: URL?, APISecret: String?) {
+    init(siteURL: URL?, APISecret: String?, loggerManager: LoggerManager) {
+
+        self.loggerManager = loggerManager
+
+        logger = loggerManager.logger(forCategory: "NightscoutService")
+
         credentialValues = [
             siteURL?.absoluteString,
             APISecret,
@@ -47,9 +57,8 @@ class NightscoutService: ServiceAuthenticationUI {
     // The uploader instance, if credentials are present
     private(set) var uploader: NightscoutUploader? {
         didSet {
-            let logger = DiagnosticLogger.shared.forCategory("NightscoutService")
-            uploader?.errorHandler = { (error: Error, context: String) -> Void in
-                logger.error("Error \(error), while \(context)")
+            uploader?.errorHandler = { [weak self] (error: Error, context: String) -> Void in
+                self?.logger.error("Error \(error), while \(context)")
             }
         }
     }
@@ -75,7 +84,8 @@ class NightscoutService: ServiceAuthenticationUI {
             return
         }
 
-        let uploader = NightscoutUploader(siteURL: siteURL, APISecret: APISecret)
+        let logger = loggerManager.logger(forCategory: "NightscoutUploader")
+        let uploader = NightscoutUploader(siteURL: siteURL, APISecret: APISecret, logger: logger)
         uploader.checkAuth { (error) in
             completion(true, error)
         }

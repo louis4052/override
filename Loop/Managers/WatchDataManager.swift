@@ -14,10 +14,15 @@ import LoopKit
 final class WatchDataManager: NSObject {
 
     unowned let deviceManager: DeviceDataManager
+    private let loggerManager: LoggerManager
+    private let analyticsManager: AnalyticsManager
 
-    init(deviceManager: DeviceDataManager) {
+    init(deviceManager: DeviceDataManager, loggerManager: LoggerManager, analyticsManager: AnalyticsManager) {
         self.deviceManager = deviceManager
-        self.log = deviceManager.logger.forCategory("WatchDataManager")
+        self.loggerManager = loggerManager
+        self.analyticsManager = analyticsManager
+
+        log = loggerManager.logger(forCategory: "WatchDataManager")
 
         super.init()
 
@@ -27,7 +32,7 @@ final class WatchDataManager: NSObject {
         watchSession?.activate()
     }
 
-    private let log: CategoryLogger
+    private let log: Logger
 
     private var watchSession: WCSession? = {
         if WCSession.isSupported() {
@@ -202,7 +207,7 @@ final class WatchDataManager: NSObject {
             deviceManager.loopManager.addCarbEntryAndRecommendBolus(newEntry) { (result) in
                 switch result {
                 case .success(let recommendation):
-                    AnalyticsManager.shared.didAddCarbsFromWatch(carbEntry.value)
+                    self.analyticsManager.didAddCarbsFromWatch(carbEntry.value)
                     completionHandler?(recommendation?.amount)
                 case .failure(let error):
                     self.log.error(error)
@@ -227,7 +232,7 @@ extension WatchDataManager: WCSessionDelegate {
             if let bolus = SetBolusUserInfo(rawValue: message as SetBolusUserInfo.RawValue) {
                 self.deviceManager.enactBolus(units: bolus.value, at: bolus.startDate) { (error) in
                     if error == nil {
-                        AnalyticsManager.shared.didSetBolusFromWatch(bolus.value)
+                        self.analyticsManager.didSetBolusFromWatch(bolus.value)
                     }
                 }
             }

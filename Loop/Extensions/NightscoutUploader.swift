@@ -10,7 +10,6 @@ import NightscoutUploadKit
 
 
 extension NightscoutUploader: CarbStoreSyncDelegate {
-    static let logger = DiagnosticLogger.shared.forCategory("NightscoutUploader")
 
     public func carbStore(_ carbStore: CarbStore, hasEntriesNeedingUpload entries: [StoredCarbEntry], completion: @escaping ([StoredCarbEntry]) -> Void) {
         var created = [StoredCarbEntry]()
@@ -33,14 +32,14 @@ extension NightscoutUploader: CarbStoreSyncDelegate {
                 }
                 completion(created)
             case .failure(let error):
-                NightscoutUploader.logger.error(error)
+                self.logger?.error(error)
                 completion(created)
             }
         }
 
         modifyTreatments(modified.map { MealBolusNightscoutTreatment(carbEntry: $0) }) { (error) in
             if let error = error {
-                NightscoutUploader.logger.error(error)
+                self.logger?.error(error)
             } else {
                 for index in modified.startIndex..<modified.endIndex {
                     modified[index].isUploaded = true
@@ -56,7 +55,7 @@ extension NightscoutUploader: CarbStoreSyncDelegate {
 
         deleteTreatmentsById(deleted.map { $0.externalID }) { (error) in
             if let error = error {
-                NightscoutUploader.logger.error(error)
+                self.logger?.error(error)
             } else {
                 for index in deleted.startIndex..<deleted.endIndex {
                     deleted[index].isUploaded = true

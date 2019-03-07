@@ -19,24 +19,22 @@ final class AnalyticsManager: IdentifiableClass {
         }
     }
 
-    init() {
+    init(loggerManager: LoggerManager) {
         if let APIKey = KeychainManager().getAmplitudeAPIKey() {
             amplitudeService = AmplitudeService(APIKey: APIKey)
         } else {
             amplitudeService = AmplitudeService(APIKey: nil)
         }
 
-        logger = DiagnosticLogger.shared.forCategory(type(of: self).className)
+        logger = loggerManager.logger(forCategory: type(of: self).className)
     }
-
-    static let shared = AnalyticsManager()
 
     // MARK: - Helpers
 
-    private var logger: CategoryLogger?
+    private let logger: Logger
 
     private func logEvent(_ name: String, withProperties properties: [AnyHashable: Any]? = nil, outOfSession: Bool = false) {
-        logger?.debug("\(name) \(properties ?? [:])")
+        logger.debug("\(name) \(properties ?? [:])")
         amplitudeService.client?.logEvent(name, withEventProperties: properties, outOfSession: outOfSession)
     }
 

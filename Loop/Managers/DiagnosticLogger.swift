@@ -11,7 +11,7 @@ import os.log
 import LoopKit
 
 
-final class DiagnosticLogger {
+final class DiagnosticLogger: LoggerManager {
     private let isSimulator: Bool = TARGET_OS_SIMULATOR != 0
 
     var logglyService: LogglyService {
@@ -21,8 +21,6 @@ final class DiagnosticLogger {
     }
 
     let remoteLogLevel: OSLogType
-
-    static let shared: DiagnosticLogger = DiagnosticLogger()
 
     init() {
         remoteLogLevel = isSimulator ? .fault : .info
@@ -34,7 +32,7 @@ final class DiagnosticLogger {
         logglyService = LogglyService(customerToken: customerToken)
     }
 
-    func forCategory(_ category: String) -> CategoryLogger {
+    func logger(forCategory category: String) -> Logger {
         return CategoryLogger(logger: self, category: category)
     }
 }
@@ -58,7 +56,7 @@ extension OSLogType {
 }
 
 
-final class CategoryLogger {
+final class CategoryLogger: Logger {
     private let logger: DiagnosticLogger
     let category: String
 
@@ -105,6 +103,11 @@ final class CategoryLogger {
     func info(_ message: String) {
         systemLog.info("%{public}@", message)
         remoteLog(.info, message: message)
+    }
+
+    func `default`(_ message: [String: Any]) {
+        systemLog.default("%{public}@", String(describing: message))
+        remoteLog(.default, message: message)
     }
 
     func `default`(_ message: String) {

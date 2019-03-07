@@ -144,7 +144,7 @@ final class CarbAbsorptionViewController: ChartsTableViewController, Identifiabl
                         carbStatuses = status
                         carbsOnBoard = status.getClampedCarbsOnBoard()
                     case .failure(let error):
-                        self.deviceManager.logger.addError(error, fromSource: "CarbStore")
+                        self.deviceManager.loggerManager.logger(forCategory: "CarbStore").error(error)
                         retryContext.update(with: .carbs)
                     }
 
@@ -158,7 +158,7 @@ final class CarbAbsorptionViewController: ChartsTableViewController, Identifiabl
                         carbEffects = effects
                     case .failure(let error):
                         carbEffects = []
-                        self.deviceManager.logger.addError(error, fromSource: "CarbStore")
+                        self.deviceManager.loggerManager.logger(forCategory: "CarbStore").error(error)
                         retryContext.update(with: .carbs)
                     }
                     reloadGroup.leave()
@@ -179,7 +179,7 @@ final class CarbAbsorptionViewController: ChartsTableViewController, Identifiabl
                 case .success(let total):
                     carbTotal = total
                 case .failure(let error):
-                    self.deviceManager.logger.addError(error, fromSource: "CarbStore")
+                    self.deviceManager.loggerManager.logger(forCategory: "CarbStore").error(error)
                     retryContext.update(with: .carbs)
                 }
 

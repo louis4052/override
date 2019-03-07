@@ -42,7 +42,7 @@ final class SettingsTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        AnalyticsManager.shared.didDisplaySettingsScreen()
+        dataManager.analyticsManager.didDisplaySettingsScreen()
     }
 
     var dataManager: DeviceDataManager!
@@ -300,12 +300,12 @@ final class SettingsTableViewController: UITableViewController {
                 configCell.textLabel?.text = nightscoutService.title
                 configCell.detailTextLabel?.text = nightscoutService.siteURL?.absoluteString ?? SettingsTableViewCell.TapToSetString
             case .loggly:
-                let logglyService = dataManager.logger.logglyService
+                let logglyService = dataManager.loggerManager.logglyService
 
                 configCell.textLabel?.text = logglyService.title
                 configCell.detailTextLabel?.text = logglyService.isAuthorized ? SettingsTableViewCell.EnabledString : SettingsTableViewCell.TapToSetString
             case .amplitude:
-                let amplitudeService = AnalyticsManager.shared.amplitudeService
+                let amplitudeService = dataManager.analyticsManager.amplitudeService
 
                 configCell.textLabel?.text = amplitudeService.title
                 configCell.detailTextLabel?.text = amplitudeService.isAuthorized ? SettingsTableViewCell.EnabledString : SettingsTableViewCell.TapToSetString
@@ -571,20 +571,20 @@ final class SettingsTableViewController: UITableViewController {
 
                 show(vc, sender: sender)
             case .loggly:
-                let service = dataManager.logger.logglyService
+                let service = dataManager.loggerManager.logglyService
                 let vc = AuthenticationViewController(authentication: service)
                 vc.authenticationObserver = { [weak self] (service) in
-                    self?.dataManager.logger.logglyService = service
+                    self?.dataManager.loggerManager.logglyService = service
 
                     self?.tableView.reloadRows(at: [indexPath], with: .none)
                 }
 
                 show(vc, sender: sender)
             case .amplitude:
-                let service = AnalyticsManager.shared.amplitudeService
+                let service = dataManager.analyticsManager.amplitudeService
                 let vc = AuthenticationViewController(authentication: service)
                 vc.authenticationObserver = { [weak self] (service) in
-                    AnalyticsManager.shared.amplitudeService = service
+                    self?.dataManager.analyticsManager.amplitudeService = service
 
                     self?.tableView.reloadRows(at: [indexPath], with: .none)
                 }
@@ -736,10 +736,10 @@ extension SettingsTableViewController: DailyValueScheduleTableViewControllerDele
                     switch row {
                     case .carbRatio:
                         dataManager.loopManager.carbRatioSchedule = CarbRatioSchedule(unit: controller.unit, dailyItems: controller.scheduleItems, timeZone: controller.timeZone)
-                        AnalyticsManager.shared.didChangeCarbRatioSchedule()
+                        dataManager.analyticsManager.didChangeCarbRatioSchedule()
                     case .insulinSensitivity:
                         dataManager.loopManager.insulinSensitivitySchedule = InsulinSensitivitySchedule(unit: controller.unit, dailyItems: controller.scheduleItems, timeZone: controller.timeZone)
-                        AnalyticsManager.shared.didChangeInsulinSensitivitySchedule()
+                        dataManager.analyticsManager.didChangeInsulinSensitivitySchedule()
                     default:
                         break
                     }

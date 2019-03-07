@@ -37,15 +37,17 @@ final class DeviceDataManager {
     
     var pumpManagerHUDProvider: HUDProvider?
 
-    let logger = DiagnosticLogger.shared
+    let loggerManager: DiagnosticLogger
 
-    private let log = DiagnosticLogger.shared.forCategory("DeviceManager")
+    private let log: Logger
+
+    let analyticsManager: AnalyticsManager
 
     /// Remember the launch date of the app for diagnostic reporting
     private let launchDate = Date()
 
     /// Manages authentication for remote services
-    let remoteDataManager = RemoteDataManager()
+    let remoteDataManager: RemoteDataManager
 
     private var nightscoutDataManager: NightscoutDataManager!
 
@@ -91,7 +93,7 @@ final class DeviceDataManager {
                     }
                     
                     if let oldBatteryValue = oldValue?.pumpBatteryChargeRemaining, newBatteryValue - oldBatteryValue >= DeviceDataManager.batteryReplacementDetectionThreshold {
-                        AnalyticsManager.shared.pumpBatteryWasReplaced()
+                        analyticsManager.pumpBatteryWasReplaced()
                     }
                 }
                     
@@ -141,7 +143,12 @@ final class DeviceDataManager {
 
     private(set) var loopManager: LoopDataManager!
 
-    init() {
+    init(loggerManager: DiagnosticLogger, analyticsManager: AnalyticsManager) {
+        self.loggerManager = loggerManager
+        self.analyticsManager = analyticsManager
+
+        log = loggerManager.logger(forCategory: "DeviceManager")
+
         pumpManager = UserDefaults.appGroup.pumpManager as? PumpManagerUI
         
         if let cgmManager = UserDefaults.appGroup.cgmManager {
@@ -149,14 +156,17 @@ final class DeviceDataManager {
         } else if UserDefaults.appGroup.isCGMManagerValidPumpManager {
             self.cgmManager = pumpManager as? CGMManager
         }
-        
+
+        remoteDataManager = RemoteDataManager(loggerManager: loggerManager)
         remoteDataManager.delegate = self
         statusExtensionManager = StatusExtensionDataManager(deviceDataManager: self)
         loopManager = LoopDataManager(
             lastLoopCompleted: statusExtensionManager.context?.lastLoopCompleted,
-            lastTempBasal: statusExtensionManager.context?.netBasal?.tempBasal
+            lastTempBasal: statusExtensionManager.context?.netBasal?.tempBasal,
+            loggerManager: loggerManager,
+            analyticsManager: analyticsManager
         )
-        watchManager = WatchDataManager(deviceManager: self)
+        watchManager = WatchDataManager(deviceManager: self, loggerManager: loggerManager, analyticsManager: analyticsManager)
         nightscoutDataManager = NightscoutDataManager(deviceDataManager: self)
 
         loopManager.delegate = self
@@ -228,7 +238,7 @@ extension DeviceDataManager: PumpManagerDelegate {
     func pumpManager(_ pumpManager: PumpManager, didAdjustPumpClockBy adjustment: TimeInterval) {
         log.default("PumpManager:\(type(of: pumpManager)) did adjust pump block by \(adjustment)s")
 
-        AnalyticsManager.shared.pumpTimeDidDrift(adjustment)
+        analyticsManager.pumpTimeDidDrift(adjustment)
     }
 
     func pumpManagerDidUpdateState(_ pumpManager: PumpManager) {
@@ -242,7 +252,7 @@ extension DeviceDataManager: PumpManagerDelegate {
 
         cgmManager?.fetchNewDataIfNeeded { (result) in
             if case .newData = result {
-                AnalyticsManager.shared.didFetchNewCGMData()
+                self.analyticsManager.didFetchNewCGMData()
             }
 
             if let manager = self.cgmManager {
@@ -320,7 +330,7 @@ extension DeviceDataManager: PumpManagerDelegate {
                     }
 
                     if newValue.unitVolume > previousVolume + 1 {
-                        AnalyticsManager.shared.reservoirWasRewound()
+                        self.analyticsManager.reservoirWasRewound()
 
                         NotificationManager.clearPumpReservoirNotification()
                     }
@@ -361,7 +371,7 @@ extension DeviceDataManager: DoseStoreDelegate {
             case .success(let objects):
                 completionHandler(objects)
             case .failure(let error):
-                let logger = DiagnosticLogger.shared.forCategory("NightscoutUploader")
+                let logger = self.loggerManager.logger(forCategory: "NightscoutUploader")
                 logger.error(error)
                 completionHandler([])
             }

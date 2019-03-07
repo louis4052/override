@@ -137,7 +137,7 @@ final class StatusTableViewController: ChartsTableViewController {
 
         onscreen = true
 
-        AnalyticsManager.shared.didDisplayStatusScreen()
+        deviceManager.analyticsManager.didDisplayStatusScreen()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -338,7 +338,7 @@ final class StatusTableViewController: ChartsTableViewController {
             deviceManager.loopManager.doseStore.getInsulinOnBoardValues(start: startDate) { (result) -> Void in
                 switch result {
                 case .failure(let error):
-                    self.deviceManager.logger.addError(error, fromSource: "DoseStore")
+                    self.deviceManager.loggerManager.logger(forCategory: "DoseStore").error(error)
                     retryContext.update(with: .insulin)
                     iobValues = []
                 case .success(let values):
@@ -351,7 +351,7 @@ final class StatusTableViewController: ChartsTableViewController {
             deviceManager.loopManager.doseStore.getNormalizedDoseEntries(start: startDate) { (result) -> Void in
                 switch result {
                 case .failure(let error):
-                    self.deviceManager.logger.addError(error, fromSource: "DoseStore")
+                    self.deviceManager.loggerManager.logger(forCategory: "DoseStore").error(error)
                     retryContext.update(with: .insulin)
                     doseEntries = []
                 case .success(let doses):
@@ -848,7 +848,7 @@ final class StatusTableViewController: ChartsTableViewController {
                             self.updateHUDandStatusRows(statusRowMode: .hidden, newSize: nil, animated: true)
 
                             if let error = error {
-                                self.deviceManager.logger.addError(error, fromSource: "TempBasal")
+                                self.deviceManager.loggerManager.logger(forCategory: "TempBasal").error(error)
                                 self.present(UIAlertController(with: error), animated: true)
                             } else {
                                 self.refreshContext.update(with: .status)
@@ -918,6 +918,7 @@ final class StatusTableViewController: ChartsTableViewController {
                 recommendation: sender as? BolusRecommendation,
                 glucoseUnit: self.charts.glucoseUnit
             )
+            deviceManager.analyticsManager.didDisplayBolusScreen()
         case let vc as PredictionTableViewController:
             vc.deviceManager = deviceManager
         case let vc as SettingsTableViewController:
@@ -956,7 +957,7 @@ final class StatusTableViewController: ChartsTableViewController {
                     if error is CarbStore.CarbStoreError {
                         self.present(UIAlertController(with: error), animated: true)
                     } else {
-                        self.deviceManager.logger.addError(error, fromSource: "Bolus")
+                        self.deviceManager.loggerManager.logger(forCategory: "Bolus").error(error)
                     }
                 }
             }

@@ -296,6 +296,8 @@
 		898ECA63218ABD21001E9D35 /* ComplicationChartManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898ECA62218ABD21001E9D35 /* ComplicationChartManager.swift */; };
 		898ECA65218ABD9B001E9D35 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898ECA64218ABD9A001E9D35 /* CGRect.swift */; };
 		898ECA69218ABDA9001E9D35 /* CLKTextProvider+Compound.m in Sources */ = {isa = PBXBuildFile; fileRef = 898ECA67218ABDA8001E9D35 /* CLKTextProvider+Compound.m */; };
+		A5AE1BED2275094400F0885E /* NightscoutUploader+Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AE1BEC2275094400F0885E /* NightscoutUploader+Profile.swift */; };
+		A5AE1BEF227509CC00F0885E /* UserDefaults+katie.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AE1BEE227509CC00F0885E /* UserDefaults+katie.swift */; };
 		C10428971D17BAD400DD539A /* NightscoutUploadKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C10428961D17BAD400DD539A /* NightscoutUploadKit.framework */; };
 		C10B28461EA9BA5E006EA1FC /* far_future_high_bg_forecast.json in Resources */ = {isa = PBXBuildFile; fileRef = C10B28451EA9BA5E006EA1FC /* far_future_high_bg_forecast.json */; };
 		C11C87DE1E21EAAD00BB71D3 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F526D5E1DF2459000A04910 /* HKUnit.swift */; };
@@ -848,6 +850,8 @@
 		898ECA66218ABDA8001E9D35 /* WatchApp Extension-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WatchApp Extension-Bridging-Header.h"; sourceTree = "<group>"; };
 		898ECA67218ABDA8001E9D35 /* CLKTextProvider+Compound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLKTextProvider+Compound.m"; sourceTree = "<group>"; };
 		898ECA68218ABDA9001E9D35 /* CLKTextProvider+Compound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLKTextProvider+Compound.h"; sourceTree = "<group>"; };
+		A5AE1BEC2275094400F0885E /* NightscoutUploader+Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NightscoutUploader+Profile.swift"; sourceTree = "<group>"; };
+		A5AE1BEE227509CC00F0885E /* UserDefaults+katie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+katie.swift"; sourceTree = "<group>"; };
 		C10428961D17BAD400DD539A /* NightscoutUploadKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NightscoutUploadKit.framework; path = Carthage/Build/iOS/NightscoutUploadKit.framework; sourceTree = SOURCE_ROOT; };
 		C10B28451EA9BA5E006EA1FC /* far_future_high_bg_forecast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = far_future_high_bg_forecast.json; sourceTree = "<group>"; };
 		C12F21A61DFA79CB00748193 /* recommend_temp_basal_very_low_end_in_range.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = recommend_temp_basal_very_low_end_in_range.json; sourceTree = "<group>"; };
@@ -1180,6 +1184,8 @@
 				430B29922041F5B200BA9F93 /* UserDefaults+Loop.swift */,
 				892A5D58222F0A27008961AB /* Debug.swift */,
 				892A5D682230C41D008961AB /* RangeReplaceableCollection.swift */,
+				A5AE1BEC2275094400F0885E /* NightscoutUploader+Profile.swift */,
+				A5AE1BEE227509CC00F0885E /* UserDefaults+katie.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1947,6 +1953,7 @@
 				434FF1EA1CF26C29000DB779 /* IdentifiableClass.swift in Sources */,
 				43A567691C94880B00334FAC /* LoopDataManager.swift in Sources */,
 				43D848B01E7DCBE100DADCBC /* Result.swift in Sources */,
+				A5AE1BEF227509CC00F0885E /* UserDefaults+katie.swift in Sources */,
 				43B260491ED248FB008CAA77 /* CarbEntryTableViewCell.swift in Sources */,
 				4302F4E11D4E9C8900F0FCAF /* TextFieldTableViewController.swift in Sources */,
 				435CB6271F37AE5600C320C7 /* WalshInsulinModel.swift in Sources */,
@@ -1992,6 +1999,7 @@
 				C1FB428C217806A400FAB378 /* StateColorPalette.swift in Sources */,
 				4F08DE8F1E7BB871006741EA /* CollectionType+Loop.swift in Sources */,
 				435400341C9F878D00D5819C /* SetBolusUserInfo.swift in Sources */,
+				A5AE1BED2275094400F0885E /* NightscoutUploader+Profile.swift in Sources */,
 				437D9BA31D7BC977007245E8 /* PredictionTableViewController.swift in Sources */,
 				4344628F20A7ADD500C4BE6F /* UserDefaults+CGM.swift in Sources */,
 				43F41C371D3BF32400C11ED6 /* UIAlertController.swift in Sources */,

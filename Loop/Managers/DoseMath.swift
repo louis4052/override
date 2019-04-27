@@ -153,11 +153,11 @@ extension TempBasalRecommendation {
                 return nil
             } else if matchesRate(scheduledBasalRate), scheduledBasalRateMatchesPump {
                 // If our new temp matches the scheduled rate of the pump, cancel the current temp
-                return .cancel
+                return self
             }
         } else if matchesRate(scheduledBasalRate), scheduledBasalRateMatchesPump {
             // If we recommend the in-progress scheduled basal rate of the pump, do nothing
-            return nil
+            return self
         }
 
         return self
